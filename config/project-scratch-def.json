@@ -1,13 +1,51 @@
 {
-  "orgName": "malek company",
-  "edition": "Developer",
-  "features": ["EnableSetPasswordInApi"],
+  "orgName": "Malek Company",
+  "edition": "Enterprise",
+  "features": [
+    "API",
+    "AuthorApex",
+    "Communities",
+    "ContactsToMultipleAccounts",
+    "EnableSetPasswordInApi",
+    "PlatformConnect:3",
+    "ServiceCloud",
+    "Sites"
+  ],
   "settings": {
     "lightningExperienceSettings": {
       "enableS1DesktopEnabled": true
     },
     "mobileSettings": {
       "enableS1EncryptedStoragePref2": false
+    },
+    "languageSettings": {
+      "enableTranslationWorkbench": true
+    },
+    "communitiesSettings": {
+      "enableNetworksEnabled": true
+    },
+    "pathAssistantSettings": {
+      "pathAssistantEnabled": true
+    },
+    "enhancedNotesSettings": {
+      "enableEnhancedNotes": true
+    }
+  },
+  "objectSettings": {
+    "account": {
+      "sharingModel": "Private"
+    },
+    "contact": {
+      "sharingModel": "Private"
+    },
+    "opportunity": {
+      "sharingModel": "Private"
+    },
+    "product2": {
+      "sharingModel": "ReadWrite"
+    },
+    "case": {
+      "sharingModel": "Private"
     }
   }
 }
