@@ -9,6 +9,7 @@
     "EnableSetPasswordInApi",
     "PlatformConnect:3",
     "ServiceCloud",
+    "Einstein1AIPlatform",
     "Sites"
   ],
   "settings": {
@@ -29,6 +30,12 @@
     },
     "enhancedNotesSettings": {
       "enableEnhancedNotes": true
+    },
+     "agentPlatformSettings": {
+      "enableAgentPlatform": true
+    },
+    "einsteinGptSettings" : {
+      "enableEinsteinGptPlatform" : true
     }
   },
   "objectSettings": {
