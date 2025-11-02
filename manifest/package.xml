@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+	<types>
+		<members>Medex</members>
+		<name>CustomApplication</name>
+	</types>
+	<types>
+		<members>Inventory__c.Product__c</members>
+		<members>Inventory__c.Quantity__c</members>
+		<members>Inventory__c.Warehouse__c</members>
+		<name>CustomField</name>
+	</types>
+	<types>
+		<members>Inventory__c</members>
+		<members>Warehouse__c</members>
+		<name>CustomObject</name>
+	</types>
+	<types>
+		<members>*</members>
+		<name>CustomTab</name>
+	</types>
+	<version>65.0</version>
+</Package>
