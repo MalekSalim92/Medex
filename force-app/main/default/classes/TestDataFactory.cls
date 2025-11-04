@@ -58,6 +58,36 @@ public with sharing class TestDataFactory {
         insert warehouses;
         System.debug('Inserted ' + warehouses.size() + ' warehouses records.');
      }
+
+     public static void createInventories() {
+        List<Inventory__c> inventories = new List<Inventory__c>();
+
+        List<Warehouse__c> warehouses = [SELECT Id FROM Warehouse__c];
+        List<Product2> products = [SELECT Id FROM Product2];
+        final integer STRING_LENGTH = 3;
+        final Decimal MIN = Math.pow(10,STRING_LENGTH -1); //Returns 100
+        final Decimal MAX = Math.pow(10,STRING_LENGTH) - 1; // Returns 999
+
+            for(Product2 product : products) {
+                for(Warehouse__c warehouse : warehouses){
+                    inventories.add(
+                        new Inventory__c(
+                            Product__c = product.Id,
+                            Warehouse__c = warehouse.Id,
+                            Quantity__c = generateRandomQuantity(MIN,MAX)
+                   ) 
+                    );
+                }
+               
+            }
+        
+        insert inventories;
+        System.debug('Inserted ' + inventories.size() + ' inventories records.');
+     }
+    
+     private static Decimal generateRandomQuantity(Decimal min, Decimal max) {
+        return Math.round(Math.random() * (max - min) + min);
+    }
     
     
     private static Product2 createProduct(String name, String discipline, String category, String size, String color) {
