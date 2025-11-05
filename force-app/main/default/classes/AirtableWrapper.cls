@@ -6,7 +6,7 @@ public class AirtableWrapper {
   }
   public class Fields {
     public String Name;
-    public String SKU;
+    public String Reference;
     public String Discipline;
     public String Size;
     public String Color;

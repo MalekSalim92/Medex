@@ -1,14 +1,40 @@
 public with sharing class AirtableApi {
-  public static List<AirtableWrapper.Records> getProducts() {
-    return getResponse('Product');
+  public static List<AirtableWrapper.Records> getAirtableProducts() {
+    HttpClient client = callAirtableApi('Product');
+    return parseResponse(client.get());
   }
 
-  private static List<AirtableWrapper.Records> getResponse(String tableName) {
-    HttpResponse response = callAirtableApi(tableName);
-    return parseResponse(response);
+  public static void upsertAirtableProducts(List<Product2> productsToUpsert) {
+    HttpClient client = callAirtableApi('Product');
+    String payload = buildPayload(productsToUpsert);
+    client.post(payload);
   }
 
-  private static HttpResponse callAirtableApi(String tableName) {
+  private static String buildPayload(List<Product2> productsToUpsert) {
+    List<Map<String, Object>> records = new List<Map<String, Object>>();
+    for (Product2 product : productsToUpsert) {
+      Map<String, String> fields = new Map<String, String>();
+      fields.put('Name', product.Name);
+      fields.put('Size', product.Size__c);
+      fields.put('Color', product.Color__c);
+      fields.put('Reference', product.Reference_Id__c);
+      fields.put('Category', product.Category__c);
+      fields.put('Discipline', product.Discipline__c);
+      Map<String, Object> fieldsWrapper = new Map<String, Object>();
+      fieldsWrapper.put('fields', fields);
+      records.add(fieldsWrapper);
+    }
+    Map<String, Object> performUpsert = new Map<String, Object>();
+    performUpsert.put('fieldsToMergeOn', new List<String>{ 'Reference' });
+
+    Map<String, Object> payload = new Map<String, Object>();
+    payload.put('performUpsert', performUpsert);
+    payload.put('records', records);
+
+    return JSON.serialize(payload);
+  }
+
+  private static HttpClient callAirtableApi(String tableName) {
     String tableId = AirtableSelector.getTableId(tableName);
     String path = AirtableSelector.getBasePath();
     String endpoint = path + tableId;
@@ -16,7 +42,7 @@ public with sharing class AirtableApi {
       Constants.AIRTABLE_NAMED_CREDENTIAL,
       endpoint
     );
-    return client.get();
+    return client;
   }
 
   private static List<AirtableWrapper.Records> parseResponse(
