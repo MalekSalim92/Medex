@@ -1,12 +1,12 @@
 public with sharing class ProductService {
   public static void syncFromAirtable() {
     List<Product2> productsToUpsert = new List<Product2>();
-    List<AirtableWrapper.Records> records = AirtableApi.getProducts();
+    List<AirtableWrapper.Records> records = AirtableApi.getAirtableProducts();
     for (AirtableWrapper.Records record : records) {
       productsToUpsert.add(
         new Product2(
           Name = record.fields.Name,
-          Reference_Id__c = record.fields.SKU,
+          Reference_Id__c = record.fields.Reference,
           Discipline__c = record.fields.Discipline,
           Category__c = record.fields.Category,
           Size__c = record.fields.Size,
@@ -15,6 +15,10 @@ public with sharing class ProductService {
       );
     }
     upsertProducts(productsToUpsert);
+  }
+
+  public static void syncToAirtable(List<Product2> productsToUpsert) {
+    AirtableApi.upsertAirtableProducts(productsToUpsert);
   }
 
   private static void upsertProducts(List<Product2> productsToUpsert) {
