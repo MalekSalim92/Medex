@@ -149,7 +149,7 @@ public with sharing class TestDataFactory {
       Category__c = category,
       Size__c = size,
       Color__c = color,
-      StockKeepingUnit = name.toUpperCase() +
+      Reference_Id__c = name.toUpperCase() +
         '-' +
         discipline.toUpperCase() +
         formattedSize +

@@ -1,9 +1,9 @@
 public with sharing class AirtableApi {
-  public static Map<String, Object> getProducts() {
+  public static List<AirtableWrapper.Records> getProducts() {
     return getResponse('Product');
   }
 
-  private static Map<String, Object> getResponse(String tableName) {
+  private static List<AirtableWrapper.Records> getResponse(String tableName) {
     HttpResponse response = callAirtableApi(tableName);
     return parseResponse(response);
   }
@@ -19,13 +19,19 @@ public with sharing class AirtableApi {
     return client.get();
   }
 
-  private static Map<String, Object> parseResponse(HttpResponse response) {
+  private static List<AirtableWrapper.Records> parseResponse(
+    HttpResponse response
+  ) {
     if (response.getStatusCode() != 200) {
       throw new AirtableException(
         'API Status code : ' + response.getStatusCode()
       );
     }
 
-    return (Map<String, Object>) JSON.deserializeUntyped(response.getBody());
+    AirtableWrapper data = (AirtableWrapper) JSON.deserialize(
+      response.getBody(),
+      AirtableWrapper.class
+    );
+    return data.records;
   }
 }
