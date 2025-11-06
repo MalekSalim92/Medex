@@ -1,5 +1,5 @@
 public with sharing class AirtableApi {
-  public static List<AirtableWrapper.Records> getAirtableProducts() {
+  public static AirtableWrapper getAirtableProducts() {
     HttpClient client = callAirtableApi('Product');
     return parseResponse(client.get());
   }
@@ -7,7 +7,7 @@ public with sharing class AirtableApi {
   public static void upsertAirtableProducts(List<Product2> productsToUpsert) {
     HttpClient client = callAirtableApi('Product');
     String payload = buildPayload(productsToUpsert);
-    client.post(payload);
+    client.setHeader('Content-Type', 'application/json').patch(payload);
   }
 
   private static String buildPayload(List<Product2> productsToUpsert) {
@@ -45,9 +45,7 @@ public with sharing class AirtableApi {
     return client;
   }
 
-  private static List<AirtableWrapper.Records> parseResponse(
-    HttpResponse response
-  ) {
+  private static AirtableWrapper parseResponse(HttpResponse response) {
     if (response.getStatusCode() != 200) {
       throw new AirtableException(
         'API Status code : ' + response.getStatusCode()
@@ -58,6 +56,6 @@ public with sharing class AirtableApi {
       response.getBody(),
       AirtableWrapper.class
     );
-    return data.records;
+    return data;
   }
 }
