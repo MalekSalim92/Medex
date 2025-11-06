@@ -1,7 +1,8 @@
 public with sharing class ProductService {
-  public static void syncFromAirtable() {
+  public static String syncFromAirtable() {
     List<Product2> productsToUpsert = new List<Product2>();
-    List<AirtableWrapper.Records> records = AirtableApi.getAirtableProducts();
+    AirtableWrapper data = AirtableApi.getAirtableProducts();
+    List<AirtableWrapper.records> records = data.records;
     for (AirtableWrapper.Records record : records) {
       productsToUpsert.add(
         new Product2(
@@ -15,10 +16,13 @@ public with sharing class ProductService {
       );
     }
     upsertProducts(productsToUpsert);
+    return data.offset ?? null;
   }
 
-  public static void syncToAirtable(List<Product2> productsToUpsert) {
-    AirtableApi.upsertAirtableProducts(productsToUpsert);
+  public static void syncToAirtable() {
+    String query = 'SELECT Id,Name,Reference_Id__c,Discipline__c,Category__c,Size__c,Color__c FROM Product2';
+    AirtableSyncToBatchable batch = new AirtableSyncToBatchable(query);
+    Database.executeBatch(batch, Constants.AIRTABLE_MAX_UPSERT_ALLOWED);
   }
 
   private static void upsertProducts(List<Product2> productsToUpsert) {

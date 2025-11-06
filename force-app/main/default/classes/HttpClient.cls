@@ -15,8 +15,8 @@ public with sharing class HttpClient {
     return send('GET', null);
   }
 
-  public HttpResponse post(String body) {
-    return send('POST', body);
+  public HttpResponse patch(String body) {
+    return send('PATCH', body);
   }
 
   public HttpClient setHeader(String key, String value) {

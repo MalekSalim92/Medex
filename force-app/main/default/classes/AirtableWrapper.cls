@@ -1,4 +1,5 @@
 public class AirtableWrapper {
+  public String offset;
   public List<Records> records;
   public class Records {
     public String id;
