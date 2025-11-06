@@ -1,11 +1,11 @@
 public with sharing class AirtableApi {
-  public static AirtableWrapper getAirtableProducts() {
-    HttpClient client = callAirtableApi('Product');
+  public static AirtableWrapper getAirtableProducts(String offset) {
+    HttpClient client = callAirtableApi('Product', offset);
     return parseResponse(client.get());
   }
 
   public static void upsertAirtableProducts(List<Product2> productsToUpsert) {
-    HttpClient client = callAirtableApi('Product');
+    HttpClient client = callAirtableApi('Product', null);
     String payload = buildPayload(productsToUpsert);
     client.setHeader('Content-Type', 'application/json').patch(payload);
   }
@@ -34,10 +34,10 @@ public with sharing class AirtableApi {
     return JSON.serialize(payload);
   }
 
-  private static HttpClient callAirtableApi(String tableName) {
+  private static HttpClient callAirtableApi(String tableName, String offset) {
     String tableId = AirtableSelector.getTableId(tableName);
     String path = AirtableSelector.getBasePath();
-    String endpoint = path + tableId;
+    String endpoint = path + tableId + '/?offset=' + offset;
     HttpClient client = new HttpClient(
       Constants.AIRTABLE_NAMED_CREDENTIAL,
       endpoint
