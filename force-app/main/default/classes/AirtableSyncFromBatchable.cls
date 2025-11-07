@@ -15,7 +15,7 @@ public with sharing class AirtableSyncFromBatchable implements Database.Batchabl
     Database.BatchableContext bc,
     List<SObject> recordsToGet
   ) {
-    offset = ProductService.syncFromAirtable(offset);
+    offset = AirtableService.syncFromAirtable(offset);
   }
 
   public void finish(Database.BatchableContext bc) {
