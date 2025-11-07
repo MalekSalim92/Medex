@@ -35,9 +35,19 @@ public with sharing class AirtableApi {
   }
 
   private static HttpClient callAirtableApi(String tableName, String offset) {
-    String tableId = AirtableSelector.getTableId(tableName);
-    String path = AirtableSelector.getBasePath();
-    String endpoint = path + tableId + '/?offset=' + offset;
+    String tableId = MetadataSelector.getAirtableTableId(tableName);
+    MetadataSelector.AirtableConfig cfg = MetadataSelector.getAirtableBasePath();
+    String apiVersion = cfg.apiVersion;
+    String basePath = cfg.url;
+    String endpoint =
+      '/' +
+      apiVersion +
+      '/' +
+      basePath +
+      '/' +
+      tableId +
+      '/?offset=' +
+      offset;
     HttpClient client = new HttpClient(
       Constants.AIRTABLE_NAMED_CREDENTIAL,
       endpoint

@@ -19,6 +19,10 @@ public with sharing class HttpClient {
     return send('PATCH', body);
   }
 
+  public HttpResponse post(String body) {
+    return send('POST', body);
+  }
+
   public HttpClient setHeader(String key, String value) {
     this.headers.put(key, value);
     return this;
