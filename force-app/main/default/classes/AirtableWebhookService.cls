@@ -1,16 +1,61 @@
 public with sharing class AirtableWebhookService {
-  public static void createWebhook() {
-    HttpClient client = buildClient();
-    String body = buildBody();
-    System.debug(body);
-    client.setHeader('Content-Type', 'application/json').post(body);
+  private static final String WEBHOOK_ID = AirtableSelector.getWebhookRecord()
+    .webhookId__c;
+  private static final MetadataSelector.AirtableConfig AIRTABLE_CONFIGS = MetadataSelector.getAirtableBasePath();
+  private static final String AIRTABLE_BASEURL = AIRTABLE_CONFIGS.url;
+  private static final String AIRTABLE_APIVERSION = AIRTABLE_CONFIGS.apiVersion;
+
+  public static void hardRefreshWebhook() {
+    if (String.isNotBlank(WEBHOOK_ID)) {
+      deleteWebhook();
+    }
+    createWebhook();
+  }
+  public static void refreshWebhook() {
+    HttpClient client = buildClient('/' + WEBHOOK_ID + '/refresh');
+    HttpResponse response = client.post(null);
+    updateWebhookRecord(response.getBody());
   }
 
-  private static HttpClient buildClient() {
+  public static String getWebhookPayload() {
+    HttpClient client = buildClient('/' + WEBHOOK_ID + '/payloads');
+    HttpResponse response = client.get();
+    return response.getBody();
+  }
+
+  public static void createPlatformEvent(String payload) {
+    Airtable_Webhook_Payload__e webhookEvent = new Airtable_Webhook_Payload__e(
+      payload__c = payload
+    );
+    EventBus.publish(webhookEvent);
+  }
+  private static void createWebhook() {
+    HttpClient client = buildClient(null);
+    String body = buildBody();
+    System.debug(body);
+    HttpResponse response = client.setHeader('Content-Type', 'application/json')
+      .post(body);
+    updateWebhookRecord(response.getBody());
+  }
+
+  private static void deleteWebhook() {
+    HttpClient client = buildClient('/' + WEBHOOK_ID);
+    client.remove();
+  }
+
+  private static HttpClient buildClient(String pathSuffix) {
     MetadataSelector.AirtableConfig cfg = MetadataSelector.getAirtableBasePath();
+    String endpoint =
+      '/' +
+      AIRTABLE_APIVERSION +
+      '/bases/' +
+      AIRTABLE_BASEURL +
+      '/webhooks';
+    if (String.isNotBlank(pathSuffix))
+      endpoint += pathSuffix;
     HttpClient client = new HttpClient(
       Constants.AIRTABLE_NAMED_CREDENTIAL,
-      '/' + cfg.apiVersion + '/bases/' + cfg.url + '/webhooks'
+      endpoint
     );
 
     return client;
@@ -34,5 +79,18 @@ public with sharing class AirtableWebhookService {
 
     String body = JSON.serialize(obj);
     return body;
+  }
+  private static void updateWebhookRecord(String response) {
+    Airtable_Webhook_Configuration__c record = AirtableSelector.getWebhookRecord();
+    Map<String, Object> responseMap = (Map<String, Object>) JSON.deserializeUntyped(
+      response
+    );
+    record.webhookId__c = (String) responseMap.get('id') ?? record.webhookId__c;
+    String timeStamp = (String) responseMap.get('expirationTime');
+    record.expirationTime__c = (Datetime) JSON.deserialize(
+      '"' + timeStamp + '"',
+      Datetime.class
+    );
+    update record;
   }
 }

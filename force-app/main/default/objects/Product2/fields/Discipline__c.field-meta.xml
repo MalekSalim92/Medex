@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Discipline__c</fullName>
+    <label>Discipline</label>
+    <required>true</required>
+    <trackHistory>false</trackHistory>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>BJJ</fullName>
+                <default>false</default>
+                <label>BJJ</label>
+            </value>
+            <value>
+                <fullName>Judo</fullName>
+                <default>false</default>
+                <label>Judo</label>
+            </value>
+            <value>
+                <fullName>Karate</fullName>
+                <default>false</default>
+                <label>Karate</label>
+            </value>
+            <value>
+                <fullName>Taekwondo</fullName>
+                <default>false</default>
+                <label>Taekwondo</label>
+            </value>
+            <value>
+                <fullName>Boxing</fullName>
+                <default>false</default>
+                <label>Boxing</label>
+            </value>
+            <value>
+                <fullName>MMA</fullName>
+                <default>false</default>
+                <label>MMA</label>
+            </value>
+            <value>
+                <fullName>Muay Thai</fullName>
+                <default>false</default>
+                <label>Muay Thai</label>
+            </value>
+            <value>
+                <fullName>Kickboxing</fullName>
+                <default>false</default>
+                <label>Kickboxing</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

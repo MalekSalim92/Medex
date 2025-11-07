@@ -15,6 +15,10 @@ public with sharing class HttpClient {
     return send('GET', null);
   }
 
+  public HttpResponse remove() {
+    return send('DELETE', null);
+  }
+
   public HttpResponse patch(String body) {
     return send('PATCH', body);
   }

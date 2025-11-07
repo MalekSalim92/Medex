@@ -1,6 +1,11 @@
 public with sharing class ProductService {
   private static final String PRODUCT_HANDLER_NAME = 'ProductTriggerHandler';
-  public static void handleUpsert(AirtableWrapper data) {
+
+  public static void updateProductsOnPlatformEvent(
+    List<SObject> triggerObject
+  ) {
+  }
+  public static void upsertProductOnBatchCallout(AirtableWrapper data) {
     List<Product2> productsToUpsert = makeProductList(data);
     TriggerHandler.bypass(PRODUCT_HANDLER_NAME);
     upsertProducts(productsToUpsert);
@@ -36,6 +41,7 @@ public with sharing class ProductService {
       productsToUpsert.add(
         new Product2(
           Name = record.fields.Name,
+          Airtable_Id__c = record.id,
           Reference_Id__c = record.fields.Reference,
           Discipline__c = record.fields.Discipline,
           Category__c = record.fields.Category,
