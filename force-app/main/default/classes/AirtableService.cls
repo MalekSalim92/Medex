@@ -1,7 +1,7 @@
 public with sharing class AirtableService {
   public static String syncFromAirtable(String offset) {
     AirtableWrapper data = AirtableApi.getAirtableProducts(offset);
-    ProductService.handleUpsert(data);
+    ProductService.upsertProductOnBatchCallout(data);
     return data.offset;
   }
 

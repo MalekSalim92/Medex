@@ -46,4 +46,11 @@ public with sharing class MetadataSelector {
     public String url;
     public String apiVersion;
   }
+
+  public static List<Airtable_Fields_Mapping__mdt> getAirtableFieldsMapping() {
+    return [
+      SELECT Airtable_field_id__c, Salesforce_field_api_name__c
+      FROM Airtable_Fields_Mapping__mdt
+    ];
+  }
 }
