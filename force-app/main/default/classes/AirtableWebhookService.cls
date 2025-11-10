@@ -17,8 +17,10 @@ public with sharing class AirtableWebhookService {
     updateWebhookRecord(response.getBody());
   }
 
-  public static String getWebhookPayload() {
-    HttpClient client = buildClient('/' + WEBHOOK_ID + '/payloads');
+  public static String getWebhookPayload(Decimal cursor) {
+    HttpClient client = buildClient(
+      '/' + WEBHOOK_ID + '/payloads?cursor=' + cursor
+    );
     HttpResponse response = client.get();
     return response.getBody();
   }
@@ -82,6 +84,7 @@ public with sharing class AirtableWebhookService {
   }
   private static void updateWebhookRecord(String response) {
     Airtable_Webhook_Configuration__c record = AirtableSelector.getWebhookRecord();
+
     Map<String, Object> responseMap = (Map<String, Object>) JSON.deserializeUntyped(
       response
     );
@@ -91,6 +94,12 @@ public with sharing class AirtableWebhookService {
       '"' + timeStamp + '"',
       Datetime.class
     );
+
+    update record;
+  }
+  public static void updateWebhookCursor(Integer cursor) {
+    Airtable_Webhook_Configuration__c record = AirtableSelector.getWebhookRecord();
+    record.Cursor__c = cursor;
     update record;
   }
 }
