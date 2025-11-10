@@ -47,10 +47,17 @@ public with sharing class MetadataSelector {
     public String apiVersion;
   }
 
-  public static List<Airtable_Fields_Mapping__mdt> getAirtableFieldsMapping() {
-    return [
+  public static Map<String, String> getAirtableFieldsMapping() {
+    Map<String, String> fieldMapping = new Map<String, String>();
+    for (Airtable_Fields_Mapping__mdt mapping : [
       SELECT Airtable_field_id__c, Salesforce_field_api_name__c
       FROM Airtable_Fields_Mapping__mdt
-    ];
+    ]) {
+      fieldMapping.put(
+        mapping.Airtable_field_id__c,
+        mapping.Salesforce_field_api_name__c
+      );
+    }
+    return fieldMapping;
   }
 }
