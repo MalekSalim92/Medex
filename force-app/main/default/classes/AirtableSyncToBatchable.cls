@@ -1,29 +1,24 @@
 public with sharing class AirtableSyncToBatchable implements Database.Batchable<SObject>, Database.AllowsCallouts {
   private Set<Id> productIds;
-  public AirtableSyncToBatchable(Set<Id> productIds) {
+  private String operationType;
+  public AirtableSyncToBatchable(Set<Id> productIds, String operationType) {
     this.productIds = productIds;
+    this.operationType = operationType;
   }
 
   public Iterable<SObject> start(Database.BatchableContext bc) {
-    return [
-      SELECT
-        Id,
-        Name,
-        Reference_Id__c,
-        Discipline__c,
-        Category__c,
-        Size__c,
-        Color__c
-      FROM Product2
-      WHERE Id IN :productIds
-    ];
+    return ProductSelector.productsByIds(productIds);
   }
 
   public void execute(
     Database.BatchableContext bc,
     List<SObject> recordsToUpsert
   ) {
-    AirtableApi.upsertAirtableProducts(recordsToUpsert);
+    if (operationType.contains('INSERT'))
+      AirtableApi.insertAirtableProducts(recordsToUpsert);
+    else {
+      AirtableApi.updateAirtableProducts(recordsToUpsert);
+    }
   }
 
   public void finish(Database.BatchableContext bc) {

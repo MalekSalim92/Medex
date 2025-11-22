@@ -7,14 +7,12 @@ public with sharing class ProductService {
     List<Product2> productsToUpsert = new List<Product2>();
     Integer cursor;
     for (Airtable_Webhook_Payload__e payloadRecord : triggerObject) {
-      System.debug('payloadRecord ::::: ' + payloadRecord);
       cursor = parseAirtableWebhookCursor(payloadRecord.payload__c);
-      System.debug('CURSOR ::::: ' + cursor);
-      Map<String, Map<String, Object>> newMpa = parseAirtableWebhookPayloadToProduct(
+      Map<String, Map<String, Object>> parsedPayload = parseAirtableWebhookPayloadToProduct(
         payloadRecord.payload__c
       );
-      System.debug('NEW MAP ::::: ' + newMpa);
-      List<Product2> productToUpsert = buildProductToUpsert(newMpa);
+      List<Product2> productToUpsert = buildProductToUpsert(parsedPayload);
+
       productsToUpsert.addAll(productToUpsert);
     }
     if (cursor != null) {
@@ -22,7 +20,7 @@ public with sharing class ProductService {
     }
     if (!productsToUpsert.isEmpty()) {
       TriggerHandler.bypass(PRODUCT_HANDLER_NAME);
-      // upsertProducts(productsToUpsert);
+      upsertProducts(productsToUpsert);
       TriggerHandler.clearBypass(PRODUCT_HANDLER_NAME);
     }
   }
@@ -44,7 +42,7 @@ public with sharing class ProductService {
   private static Map<String, Map<String, Object>> parseAirtableWebhookPayloadToProduct(
     String body
   ) {
-    Map<String, String> fieldMapping = MetadataSelector.getAirtableFieldsMapping();
+    Map<String, String> fieldMapping = MetadataSelector.getAirtableFieldsMappingById();
     Map<String, Map<String, Object>> recordsToUpsert = new Map<String, Map<String, Object>>();
     Map<String, Object> mappedFields = new Map<String, Object>();
 
@@ -110,15 +108,16 @@ public with sharing class ProductService {
   }
 
   private static List<Product2> buildProductToUpsert(
-    Map<String, Map<String, Object>> m
+    Map<String, Map<String, Object>> parsedPayload
   ) {
     Map<String, Product2> productToAirtableId = new Map<String, Product2>();
     List<Product2> productsToUpsert = new List<Product2>();
-
-    for (Product2 prod : [SELECT Id, Airtable_Id__c FROM Product2]) {
+    List<String> salesforceFieldNames = MetadataSelector.getAirtableFieldsMappingById()
+      .values();
+    for (Product2 prod : ProductSelector.products()) {
       productToAirtableId.put(prod.Airtable_Id__c, prod);
     }
-    for (String airtableId : m.keySet()) {
+    for (String airtableId : parsedPayload.keySet()) {
       Product2 prod;
       if (productToAirtableId.containsKey(airtableId)) {
         prod = productToAirtableId.get(airtableId);
@@ -126,19 +125,13 @@ public with sharing class ProductService {
         prod = new Product2();
         prod.Airtable_Id__c = airtableId;
       }
-      Map<String, Object> fields = m.get(airtableId);
-      if (fields.containsKey('Name'))
-        prod.Name = (String) fields.get('Name');
-      if (fields.containsKey('Reference_Id__c'))
-        prod.Reference_Id__c = (String) fields.get('Reference_Id__c');
-      if (fields.containsKey('Category__c'))
-        prod.Category__c = (String) fields.get('Category__c');
-      if (fields.containsKey('Color__c'))
-        prod.Color__c = (String) fields.get('Color__c');
-      if (fields.containsKey('Discipline__c'))
-        prod.Discipline__c = (String) fields.get('Discipline__c');
-      if (fields.containsKey('Size__c'))
-        prod.Size__c = (String) fields.get('Size__c');
+      Map<String, Object> fields = parsedPayload.get(airtableId);
+
+      for (String fieldName : salesforceFieldNames) {
+        if (fields.containsKey(fieldName)) {
+          prod.put(fieldName, fields.get(fieldName));
+        }
+      }
 
       productsToUpsert.add(prod);
     }
@@ -149,7 +142,7 @@ public with sharing class ProductService {
     boolean allowPartialSuccess = false;
     List<Database.UpsertResult> results = Database.upsert(
       productsToUpsert,
-      Product2.Reference_Id__c,
+      Product2.Airtable_Id__c,
       !allowPartialSuccess
     );
 

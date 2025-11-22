@@ -5,9 +5,15 @@ public with sharing class AirtableService {
     return data.offset;
   }
 
-  public static void syncToAirtable(List<Product2> productsToSync) {
+  public static void syncToAirtable(
+    List<Product2> productsToSync,
+    String operationType
+  ) {
     Set<Id> productIds = new Map<Id, Product2>(productsToSync).keySet();
-    AirtableSyncToBatchable batch = new AirtableSyncToBatchable(productIds);
+    AirtableSyncToBatchable batch = new AirtableSyncToBatchable(
+      productIds,
+      operationType
+    );
     Database.executeBatch(batch, Constants.AIRTABLE_MAX_UPSERT_ALLOWED);
   }
 }

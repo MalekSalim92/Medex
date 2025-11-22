@@ -47,7 +47,7 @@ public with sharing class MetadataSelector {
     public String apiVersion;
   }
 
-  public static Map<String, String> getAirtableFieldsMapping() {
+  public static Map<String, String> getAirtableFieldsMappingById() {
     Map<String, String> fieldMapping = new Map<String, String>();
     for (Airtable_Fields_Mapping__mdt mapping : [
       SELECT Airtable_field_id__c, Salesforce_field_api_name__c
@@ -55,6 +55,20 @@ public with sharing class MetadataSelector {
     ]) {
       fieldMapping.put(
         mapping.Airtable_field_id__c,
+        mapping.Salesforce_field_api_name__c
+      );
+    }
+    return fieldMapping;
+  }
+
+  public static Map<String, String> getAirtableFieldsMappingByName() {
+    Map<String, String> fieldMapping = new Map<String, String>();
+    for (Airtable_Fields_Mapping__mdt mapping : [
+      SELECT Salesforce_field_api_name__c, DeveloperName
+      FROM Airtable_Fields_Mapping__mdt
+    ]) {
+      fieldMapping.put(
+        mapping.DeveloperName,
         mapping.Salesforce_field_api_name__c
       );
     }
