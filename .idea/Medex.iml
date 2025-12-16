@@ -3,7 +3,7 @@
   <component name="FacetManager">
     <facet type="IlluminatedCloud" name="Illuminated Cloud">
       <configuration>
-        <option name="connectionName" value="Medex" />
+        <option name="connectionName" value="ApexMastery" />
         <option name="connectionType" value="SFDX" />
         <option name="moduleContents">
           <ModuleContents>
@@ -20,7 +20,7 @@
       <sourceFolder url="file://$MODULE_DIR$/force-app" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/manifest" type="java-resource" />
     </content>
-    <orderEntry type="jdk" jdkName="IlluminatedCloud (Medex/Medex)" jdkType="IlluminatedCloud" />
+    <orderEntry type="jdk" jdkName="IlluminatedCloud (Medex/ApexMastery)" jdkType="IlluminatedCloud" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
 </module>

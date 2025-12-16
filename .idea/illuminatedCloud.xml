@@ -4,10 +4,10 @@
     <option name="connections">
       <list>
         <IlluminatedCloudConnection>
-          <option name="connectionName" value="Medex" />
+          <option name="connectionName" value="ApexMastery" />
           <option name="connectionType" value="SFDX" />
           <option name="defaultModuleName" value="Medex" />
-          <option name="offlineSymbolTablePath" value="$PROJECT_DIR$/IlluminatedCloud/Medex/OfflineSymbolTable.zip" />
+          <option name="offlineSymbolTablePath" value="$PROJECT_DIR$/IlluminatedCloud/ApexMastery/OfflineSymbolTable.zip" />
         </IlluminatedCloudConnection>
       </list>
     </option>
